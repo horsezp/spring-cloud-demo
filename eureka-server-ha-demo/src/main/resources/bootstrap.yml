@@ -1,0 +1,49 @@
+spring:
+  application:
+      name: eureka-server-ha
+      
+logging:
+  file: logs/euraka-server-ha.log
+  LEVEL:
+    root: INFO
+    
+---
+spring:
+  profiles: server1
+server:
+  port: 8761
+management:
+  context_path: /admin
+eureka:
+  instance:
+    hostname: localhost
+  metadataMap:
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  dashboard:
+    path: /eurekawebui #调整页面访问的路径
+  server:
+    enable-self-preservation: true #Eureka Server节点在短时间内丢失过多的客户端时（可能发送了网络故障），那么这个节点将进入自我保护模式，不再注销任何微服务，当网络故障回复后，该节点会自动退出自我保护模式。
+  client:
+    registerWithEureka: true # 是否将自己注册到服务中心，默认为true
+    fetchRegistry: true # 是否从服务中心获取注册信息，默认为true
+    serviceUrl:
+      defaultZone: http://localhost:8762/eureka/ # 将自己注册到server2这个服务中心上去 互相作为zone就可以热备了
+# 3 台的情况下 可以用 两两注册的方式可以实现集群中节点完全对等的效果，实现最高可用性集群
+---
+spring:
+  profiles: server2
+server:
+  port: 8762
+eureka:
+  instance:
+    hostname: localhost
+  metadataMap:
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  dashboard:
+    path: /eurekawebui
+  client:
+    registerWithEureka: true # 是否将自己注册到服务中心，默认为true
+    fetchRegistry: true # 是否从服务中心获取注册信息，默认为true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/ # 将自己注册到server1这个服务中心上去
+  
