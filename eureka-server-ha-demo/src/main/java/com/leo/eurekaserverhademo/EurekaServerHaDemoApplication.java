@@ -11,3 +11,4 @@ public class EurekaServerHaDemoApplication {
 		SpringApplication.run(EurekaServerHaDemoApplication.class, args);
 	}
 }
+//启动的时候需要加入 --spring.profiles.active=peer1
