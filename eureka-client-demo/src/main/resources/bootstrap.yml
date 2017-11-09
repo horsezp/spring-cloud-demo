@@ -6,12 +6,12 @@ server:
   port: 8801
 
 eureka:
-  instance:
+  instance: #这里对应 readme 中的实例参数
     leaseRenewalIntervalInSeconds: 10     # 心跳间隔（秒），默认30s
     leaseExpirationDurationInSeconds: 30  # 失效时间，默认90s，如果服务在指定的 失效时间 内仍没有发起心跳请求，将会被剔除EurekaServer
     prefer-ip-address: true               # 实例名称显示IP配置（与instance-id配合使用）
     instance-id: ${spring.cloud.client.ipAddress}:${server.port}  # 将InstanceID设置为 IP:Port 形式
-  client:
+  client: #这里指的是在使用端这边 需要注册服务器的地址 这里对应
     serviceUrl:
       defaultZone: http://10.1.126.87:8761/eureka/,http://10.1.126.87:8762/eureka/
     healthcheck:
@@ -29,9 +29,9 @@ endpoints:
 security:
   basic:
     enabled: true
-    path: /admin        # 拦截/admin
+    path: /admin        # 拦截/admin 这里做了拦截后 Eureka Server 能否使用得到呢
   user:
-    name: admin         # 用户名
+    name: admin         # 这个用户名是Acturator的用户名
     password: 123456    # 密码
     
  #用这条URL 去检查 http://localhost:8099/admin/health 部件的health 情况
