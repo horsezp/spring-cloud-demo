@@ -3,6 +3,10 @@ Any application that registers itself with the Eureka Server to be discovered by
 
 About that @EnableEurekaClient annotation, it tells the following to the framework: hi there Spring, I am an instance of microservice X, so please register me to the Eureka Server (with eureka.instance.* properties), and I also want to discover other services, so create the necessary discovery client bean for me (with eureka.client.* properties).
 
+
+#将 actuator health中的健康状态传播到Eureka Server
+eureka.client.healthcheck.enabled=true 只应该在application.yml中设置。如果设置在bootstrap.yml中将会导致一些不良的副作用，例如在Eureka中注册的应用名称是UNKNOWN等。
+
 从这里可以看出 instance 是将自己注册进入Eureka server 的配置
 而client 是想从Eureka Server 发现其他服务的配置
 

@@ -3,7 +3,7 @@ spring:
     name: spring-rest-demo
 
 server:
-  port: 8081
+  port: 8071
   
 eureka:
   instance: #这里对应 readme 中的实例参数
@@ -14,8 +14,6 @@ eureka:
   client: #这里指的是在使用端这边 需要注册服务器的地址 这里对应
     serviceUrl:
       defaultZone: http://10.1.126.87:8761/eureka/,http://10.1.126.87:8762/eureka/
-    healthcheck:
-      enabled: true     # 将 actuator health中的健康状态传播到Eureka Server
 
 management:
   port: 8098            # actuator 暴露接口使用的端口

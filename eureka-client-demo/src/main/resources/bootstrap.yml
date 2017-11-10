@@ -4,6 +4,12 @@ spring:
 
 server:
   port: 8801
+  
+logging:
+  file: logs/euraka-client.log
+  LEVEL:
+    root: DEBUG
+    com.netflix.hystrix: DEBUG
 
 eureka:
   instance: #这里对应 readme 中的实例参数
@@ -14,24 +20,32 @@ eureka:
   client: #这里指的是在使用端这边 需要注册服务器的地址 这里对应
     serviceUrl:
       defaultZone: http://10.1.126.87:8761/eureka/,http://10.1.126.87:8762/eureka/
-    healthcheck:
-      enabled: true     # 将 actuator health中的健康状态传播到Eureka Server
-
+      
 management:
   port: 8099            # actuator 暴露接口使用的端口
-  context-path: /admin  # actuator 暴露接口的前缀
+  context-path: /admin  # actuator 暴露接口的前缀 发现 Hystrix Dashboard 使用的是与 admin 相同的port number
   security:
-    enabled: true       # 启用基本鉴权，默认为true
+    enabled: false       # 启用基本鉴权，默认为true
 endpoints:
   health:
     sensitive: true     # actuator的health接口是否敏感
+#如果management.security.enabled的值是false的话，除开health接口还依赖endpoints.health.sensitive的配置外，其他接口都不需要输入用户名和密码了
+#actuator暴露的health接口权限是由两个配置： management.security.enabled 和 endpoints.health.sensitive组合的结果进行返回的
+#false|true 或者 true|false 组合就是非登录用户拿到状态 登录用户拿到全部
+#Hystrix http://localhost:8801/hystrix
+#Hystrix stream http://localhost:8099/admin/hystrix.stream
 
-security:
+security: #如果加入了security依赖，则所有的接口默认都需要被验证，如果只想 /admin路径下的请求进行验证，则需要加入配置
   basic:
-    enabled: true
+    enabled: false
     path: /admin        # 拦截/admin 这里做了拦截后 Eureka Server 能否使用得到呢
   user:
     name: admin         # 这个用户名是Acturator的用户名
     password: 123456    # 密码
+
+feign:
+  hystrix:
+    enabled: true
     
  #用这条URL 去检查 http://localhost:8099/admin/health 部件的health 情况
+ #用这条URL  http://localhost:8801/hystrix
