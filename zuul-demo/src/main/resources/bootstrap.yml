@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: gateway
+
+server:
+  port: 8072
+
+  
+eureka:
+  instance: #这里对应 readme 中的实例参数
+    leaseRenewalIntervalInSeconds: 10     # 心跳间隔（秒），默认30s
+    leaseExpirationDurationInSeconds: 30  # 失效时间，默认90s，如果服务在指定的 失效时间 内仍没有发起心跳请求，将会被剔除EurekaServer
+    prefer-ip-address: true               # 实例名称显示IP配置（与instance-id配合使用）
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}  # 将InstanceID设置为 IP:Port 形式
+  client: #这里指的是在使用端这边 需要注册服务器的地址 这里对应
+    serviceUrl:
+      defaultZone: http://10.1.126.87:8761/eureka/,http://10.1.126.87:8762/eureka/
+      
+
+zuul:
+  routes:
+    spring-rest-demo:                 # 名称自定义
+      path: /api/**         # 访问前缀
+      serviceId: spring-rest-demo     # 服务名
+      stripPrefix: true        # 移除前缀，默认为true 用 http://localhost:8072/api/test/1234 访问就可以成功跳转到其他的服务了
+     
+# 设置默认超时时间60s（default为全局；若设置某项服务的超时时间，只需要将default替换为对应的服务名）
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+
+logging:
+  level:
+    ROOT: INFO
+    org.springframework.web: INFO
